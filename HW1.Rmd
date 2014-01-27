@@ -1,0 +1,59 @@
+HW1_Write-up
+========================================================
+
+•  Create a short reproducible document (using knitr) that describes the basic structure of a dataset and summarizes some key features of the data using a few key tables and figures. Choose a dataset from these datasets or the ones in the class Google Drive. If your dataset has a lot of variables, focus on a subset of them – less than 6 or so – for the purposes of this exercise. Your write-up should answer the following questions:
+
+o	What is the background/context for this data?
+  	To understand factors that result in diabetes of African American in Central Virginia. 
+  	To figure out what variables are related to the prevalence of diabetes of African American in Central Virginia. 
+
+o	How many observations are there?
+  	19 variables from 403 subjects who have diabetes
+  	Data were collected by interview
+
+o	What is the unit of observation?
+  	Height in inch, Weight in lb, length of waist and hip in inch, age in year
+  	No ideas of units for the other variables such as hdl, glyhd, etc 
+
+o	Is there any missing data? If so, are there patterns to the missingness?
+  	For the Height variable, there were several missing data
+  	How can we look at patterns that the missing data points have?, regularly missing data points? 
+
+o	What are the key variables and what do their distributions look like?
+  	Length of waist and hip : we define obesity using the information
+  	Waist/ hip ratio : The study found that the ratio might be related to prevalence of diabetes. 
+
+o	Is there a pair of variables that might work well for a Simple Linear Regression? (You don't necessarily need to run one, but you could.)
+  	 Severity of diabetes by a Simple Linear Regression between waist/hip ratio and glycosolated hemoglobin
+
+o	Are there any obvious outliers in the data?
+  	For the Weight variable, the mean was around 175 lb and the standard deviation was around 38 lb. There was an outlier, 290 lb, which is larger than the value from summation of the mean and 3 * standard deviation. 
+
+```{r}
+# Load library
+library(Hmisc)
+
+# Load Diabete dateset
+getHdata(diabetes)
+
+# Find missing values of the "height" variable in the dataset
+which(is.na(diabetes$height))
+
+# Check distrubtion of the "waist" variable
+hist(diabetes$waist)
+
+# Boxplot to check outliers of the "weight" variable
+boxplot(diabetes$weight, data=diabetes,xlab="Weight", ylab="lb")
+
+# LInear regression - relationship between weight and cholesterol level
+model <- lm(weight~chol, data=diabetes)
+summary(model)
+plot(diabetes$weight, diabetes$chol)
+abline(model, col="red")
+```
+
+
+```{r fig.width=7, fig.height=6}
+
+```
+
