@@ -1,0 +1,132 @@
+Problem Set 1
+Due date : 2.13.2014
+
+========================================================
+1.5
+  - I don't agree with it because one of the assumptions was that summation of error at a given X value should be zero. Thus, we can simplify more for the equation by removing the error term.
+  
+1.6
+  (a) 
+  
+```{r}
+B_0 <- 200
+B_1 <- 5
+
+# Recheck 3D plot
+X <- seq(from=0,to=50,by=10)
+Y <- B_0 + B_1 * X
+plot(X,Y,type="l")
+```
+  
+  (b) Parameter β0 : expected Y value when X value is zero (X=0)
+  
+      Parameter β1 : the amount of change in Y value when a unit of X value increases
+
+1.7
+  (a) β0 = 100, β1 = 20 => Y = 100 + 20 * X
+  
+      Expected Y value is 200 when the X value is 5,
+      variance of the expected Y value is 25
+      => We don't know what distribution the error term has because it is unspecified.
+      
+  (b) The range from 195 to 205 indicates 1*standard deviation from the mean. This suggests that the probability will be around 68% if we assume that error has normal distribution.
+  
+1.10
+  - The curvilinear relationshp indicates that changes in Salary at changes in relatively young age is larger than ones at changes in relativley old age. The slopes of the curvilinear relationship are postivie regardless of X values (here, ages). That is, the salary increases as the age increases until ages reaches 47 years.
+  
+1.11 Recheck!
+  - There is a linear relationship between the two variables, outputs from pre- and post-training. We know that outputs after post-training is less than ones before pre-training. However, we can't know causation. There might be different reasons to lead to the result. 
+  
+1.27
+  (a) The linear regression function below fit the data points well.We can see symmetrical distribution of residuals and constant variability of the residuals arcoss x values (See Normal Q-Q Plot below). The negative correlation indicated that muscle mass decreases with age.
+  
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR27.txt", destfile="CH01PR27.txt")
+pr27 = read.table("CH01PR27.txt", col.names=c("age", "mass"))
+m <- lm(mass~age, data=pr27)
+summary(m)
+# Check linearilty of model
+plot(pr27$age,pr27$mass,xlab="Age",ylab="Muscle Mass")
+abline(m)
+
+# Verity the linearilty as well as constant variability
+plot(m$residuals ~ pr27$age)
+abline(h = 0, lty = 3)
+
+# Check distribution of residuals
+qqnorm(m$residuals)
+qqline(m$residuals)
+```
+
+  (b)
+    (1) residuals at change in age by one year
+
+```{r}
+residuals <- resid(m)
+head(residuals)
+
+```
+
+    (2) at X=60, (3) at 8th case of the X, (4) 5.948^2= 35.383  
+```{r}
+c <- coef(m)
+# (2) at age 60yr
+Y = c[1] + c[2]*60
+print(Y)
+
+# (3) expected Y value at 8th case of the X
+Y1 = c[1] + c[2]*pr27[8,1]
+print(Y1)
+# (3) or use fitted function
+Z <- fitted(m)
+Z[8]
+
+```
+
+1.28
+  (a) Generally, the estimated regression function appeard as a good fit and showed a negative relationship between the level of education and crime rate in medium-sized U.S. countries. It seems like there are larger variability of erros across the x values compared to variability of the previous data set(1.27), but below Q-Q plot showed that the variability across the x values is constant. The residuals were also distributed evenly or symmetrically, which indicates mean of erros at a given x value is zero.
+  
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
+pr28 = read.table("CH01PR28.txt", col.names=c("Percent", "Crime_rate"))
+m1 <- lm(Crime_rate~Percent, data=pr28)
+summary(m1)
+
+# Check linearilty of model
+plot(pr28$Percent,pr28$Crime_rate,xlab="% of individual with at least highschool diploma",ylab="Crime rate")
+abline(m1)
+
+# Verity the linearilty as well as constant variability
+plot(m1$residuals ~ pr28$Percent)
+abline(h = 0, lty = 3)
+
+# Check distribution of residuals
+qqnorm(m1$residuals)
+qqline(m1$residuals)
+
+```
+
+  (b)
+    (1)
+
+```{r}
+residuals <- resid(m1)
+head(residuals)
+
+```
+
+    (2) at X=80, (3) at 10th case of the X, (4) 5.701^2 = 32.5014
+```{r}
+c1 <- coef(m1)
+# (2) at age 60yr
+Y2 = c1[1] + c1[2]*80
+print(Y2)
+
+# (3) use fitted function
+Z1 <- fitted(m1)
+Z1[10]
+```
+
+1.36
+
+
