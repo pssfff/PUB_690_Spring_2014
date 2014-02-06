@@ -46,14 +46,42 @@ hist(diabetes$waist)
 boxplot(diabetes$weight, data=diabetes,xlab="Weight", ylab="lb")
 
 # LInear regression - relationship between weight and cholesterol level
-model <- lm(weight~chol, data=diabetes)
+model <- lm(chol~weight, data=diabetes)
 summary(model)
 plot(diabetes$weight, diabetes$chol)
 abline(model, col="red")
+
+# Testing slr function to compare lm function and hand calculation of b0 and b1
+slr <- function(x,y){
+  
+  # Using lm function
+  r_model <- lm(y ~ x)
+  
+  # Before calculation, remove rows including missing values
+  raw_data <- data.frame(x,y)
+  pro_data <-  na.omit(raw_data)
+  
+  x <- pro_data[,1]
+  y <- pro_data[,2]
+  # Using calculation from textbook p18
+  res_x <- x - mean(x)  
+  res_y <- y - mean(y)
+  res_xy <- sum(res_x * res_y)
+  squared_res_x <- res_x^2
+  
+  b1_hand <- sum(res_xy)/sum(squared_res_x)
+  b0_hand <- mean(y) - b1_hand*mean(x)
+  
+  hand_coef <- c(b0_hand,b1_hand)
+  names(hand_coef) <- c("Intercept","x")
+  
+  # Return results to compare between the two methods
+  return(list(r_model$coef,hand_coef))
+}
+
+slr(diabetes$chol, diabetes$weight)
+
 ```
 
 
-```{r fig.width=7, fig.height=6}
-
-```
 
