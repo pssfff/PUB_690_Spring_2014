@@ -168,3 +168,132 @@ max(max_likely)
 b1_estimator <- sum(x_142*u_142)/sum(x_142^2)
 
 ```
+Chapter 2
+
+2.1 Recheck!
+  a. The student can't conclude that there is a linear association between Y and X because the estimated value of slope is falling between the 95 percent confidence limits. Thus, we can't reject the null hypothesis that B1 is zero. 
+  
+  b. Yes, the native value couldn't give us valuable information, so we might use the centering, which shifts the regression up. It doesn't affect the slope at all.
+  
+2.10
+  a.
+  b.
+  c.
+  
+2.13
+  a.
+
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR19.txt", destfile="CH01PR19.txt")
+pr19 = read.table("CH01PR19.txt", col.names=c("GPA", "ACT"))
+m2 <- lm(GPA~ACT, data=pr19)
+summary(m2)
+# Check linearilty of model
+plot(pr19$ACT,pr19$GPA,xlab="ACT",ylab="GPA")
+abline(m2)
+
+# at 28 (ACT)
+cc <- coef(m2)
+YY <- c[1] + c[2] * 28
+print(YY)
+
+# To calculate intervals, S^2 = MSE[~]
+n <- 120
+MSE <- sum(m2$residuals^2)/(n-2)
+ave_x <- mean(pr19$ACT)
+ss_2_y_h <- MSE * ((1/n) + ((28 - ave_x)^2)/sum((pr19$ACT - ave_x)^2))
+ss <- sqrt(ss_2_y_h)
+
+# t(0.975; 118) = 2.3583
+upper_b <- YY + 2.3583*ss
+under_b <- YY - 2.3583*ss
+
+# 95% confidential interval at X = 60, upper and under bound
+upper_b
+under_b
+
+```
+  b. predication of the new value 
+```{r}  
+# s^2{pred} = MSE + S^2{Y_hat_h}
+ss_2_pred <- MSE + ss_2_y_h
+ss_pred <- sqrt(ss_2_pred)
+upper_b_2 <- YY + 2.3583 * ss_pred
+under_b_2 <- YY - 2.3583 * ss_pred
+# 95% confidential interval at new prediction, upper and under bound
+upper_b_2
+under_b_2
+
+```
+  c.(b) is wider (c)
+    - 
+  d. 
+- The confidence band is wider than (a)
+- Yes, according to the textbook (p61), the confidence band represents the entire area where all possible regression lines are located. Thus, the confidence band must include the confidence interval from (a)
+```{r}
+# W^2 = 2F(0.95;2,118) 
+w_2 <- 2*qf(0.95, df1=2,df2=118)
+w <- sqrt(w_2)
+band_up <- YY + w * ss
+band_un <- YY - w * ss
+
+# band 
+band_up
+band_un
+```
+  
+  
+2.28
+
+  a.
+```{r}  
+# m => include lm results for the age and mass data set
+summary(m)
+
+c <- coef(m)
+# at age 60yr
+Y = c[1] + c[2]*60
+print(Y)
+
+# To calculate intervals, S^2 = MSE[~]
+n <- 60
+MSE <- sum(m$residuals^2)/(n-2)
+ave_x <- mean(pr27$age)
+s_2_y_h <- MSE * ((1/n) + ((60 - ave_x)^2)/sum((pr27$age - ave_x)^2))
+s <- sqrt(s_2_y_h)
+
+# t(0.975; 58) = 2.00172
+upper_b <- Y + 2.00172*s
+under_b <- Y - 2.00172*s
+
+# 95% confidential interval at X = 60, upper and under bound
+upper_b
+under_b
+```
+
+b.
+```{r}  
+# s^2{pred} = MSE + S^2{Y_hat_h}
+s_2_pred <- MSE + s_2_y_h
+s_pred <- sqrt(s_2_pred)
+upper_b_2 <- Y + 2.00172 * s_pred
+under_b_2 <- Y - 2.00172 * s_pred
+# 95% confidential interval at new prediction, upper and under bound
+upper_b_2
+under_b_2
+
+```
+c. 
+- The confidence band is wider than (a)
+- Yes, according to the textbook (p61), the confidence band represents the entire area where all possible regression lines are located. Thus, the confidence band must include the confidence interval from (a)
+```{r}
+# W^2 = 2F(0.95;2,58)
+w_2 <- 2*3.15593
+w <- sqrt(w_2)
+band_up <- Y + w * s
+band_un <- Y - w * s
+
+# band 
+band_up
+band_un
+```
