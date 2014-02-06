@@ -297,3 +297,36 @@ band_un <- Y - w * s
 band_up
 band_un
 ```
+
+2.30
+
+  a.In below summary, we can know there is a significant relationship between the two variables based on t-value as well as p-value(p < 0.001).
+  
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
+pr28 = read.table("CH01PR28.txt", col.names=c("Percent", "Crime_rate"))
+m1 <- lm(Crime_rate~Percent, data=pr28)
+summary(m1)
+```
+  b. The slope is between the 99% confidence interval. This indicates that we can 99% sure that a slope of a true regression line is falling into the confidence interval.
+  
+```{r}
+n <- 84
+MSE <- sum(m1$residuals^2)/(n-2)
+x_ave <- mean(pr28$Percent)
+s_2_b1 <- MSE/sum((pr28$Percent - x_ave)^2)
+s_b1 <- sqrt(s_2_b1)
+# t(0.995;82)
+tt <- qt(0.995,df=82)
+b1_up <- m1$coef[2] + tt*s_b1
+b1_un <- m1$coef[2] - tt*s_b1
+
+b1_up
+b1_un
+```
+
+2.50 ?
+
+
+2.68 ?
+
