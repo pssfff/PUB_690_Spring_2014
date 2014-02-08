@@ -88,7 +88,7 @@ Z[8]
   
 ```{r}
 download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
-pr28 = read.table("CH01PR28.txt", col.names=c("Percent", "Crime_rate"))
+pr28 = read.table("CH01PR28.txt", col.names=c("Crime_rate","Percent"))
 m1 <- lm(Crime_rate~Percent, data=pr28)
 summary(m1)
 
@@ -119,7 +119,7 @@ head(residuals)
 ```{r}
 c1 <- coef(m1)
 # (2) at age 60yr
-Y2 = c1[1] + c1[2]*80
+Y2 = c1[1] + c1[2]*60
 print(Y2)
 
 # (3) use fitted function
@@ -304,7 +304,7 @@ band_un
   
 ```{r}
 download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
-pr28 = read.table("CH01PR28.txt", col.names=c("Percent", "Crime_rate"))
+pr28 = read.table("CH01PR28.txt", col.names=c("Crime_rate","Percent"))
 m1 <- lm(Crime_rate~Percent, data=pr28)
 summary(m1)
 ```
@@ -325,8 +325,151 @@ b1_up
 b1_un
 ```
 
-2.50 ?
+2.50 What is the ki ?
 
 
-2.68 ?
+2.68 
 
+  a. Linear regression line below
+```{r}
+
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR20.txt", destfile="CH01PR20.txt")
+pr20 = read.table("CH01PR20.txt", col.names=c("Min","Copier"))
+m3 <- lm(Min~Copier, data=pr20)
+summary(m3)
+plot(pr20$Copier,pr20$Min,xlab="Copier",ylab="Min", xlim=c(0,8))
+axis(side=1, at=c(1:8))
+abline(m3)
+
+```
+
+  b. Please look at the red lines in the first plot. The true regression line exists betwee the confidential interval (90%). Thus, the interval estimated the true one accurately.
+  
+```{r}
+# Hand calculation to add confidential intervals for the true regression
+n <- 45
+MSE <- sum(m3$residuals^2)/(n-2)
+ave_x <- mean(pr20$Copier)
+xh <- as.matrix(c(1:8))
+ss_2 <- matrix(0,8,1)
+
+for (i in 1:8) {
+  
+  ss_2[i,1] <- MSE*((1/n)+((xh[i,1] - ave_x)^2)/sum((pr20$Copier-ave_x)^2))
+  
+}
+
+ss <- sqrt(ss_2)
+
+# W^2 = 2F(0.95;2,58)
+w_2 <- 2 * qf(0.90,2,43)
+w <- sqrt(w_2)
+y <- m3$coef[1] + m3$coef[2] * xh
+band_up <- y + w * ss
+band_un <- y - w * ss
+
+plot(pr20$Copier,pr20$Min,xlab="Copier",ylab="Min", xlim=c(0,8))
+axis(side=1, at=c(1:8))
+abline(m3)
+lines(band_up, col="red")
+lines(band_un, col="red")
+
+# Using qplot for the true regression line
+library(ggplot2)
+qplot(Copier, Min, data=pr20, geom=c("point", "smooth"),method="lm")+ theme_bw()
+
+```
+
+Chapter 3.
+
+3.8 
+  a. Stem plot for X : distribtuion of the variable
+  
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
+pr28 = read.table("CH01PR28.txt", col.names=c("Crime_rate","Percent"))
+m1 <- lm(Crime_rate~Percent, data=pr28)
+# stem and leaf plot for X
+stem(pr28$Percent)
+
+```
+
+  b. Yes, the distribution looks like symmetrical.
+```{r}
+# Stem and leaf plot for residuals across X
+stem(m1$residuals)
+
+```
+
+  c. Residual plot of residuals versus Y. As the crime rate increases, the residuals also increase.
+```{r}
+plot(pr28$Crime_rate, m1$residuals)
+```
+
+  d. Normal probability plot of the residuals
+```{r}
+# Check distribution of residuals
+qqnorm(m1$residuals)
+qqline(m1$residuals)
+
+
+# Get
+```
+    Based on Table 3.6, lack of fit test
+    => The regression line is linear (Stick to Null Hypo)
+```{r}
+# First soring by Y values at the same X
+new_pr28 <- pr28[order(pr28$Percent, xtfrm(pr28$Percent)), ]
+# Calculate SSPE sum of (Y - mean(Y))^2
+pp <- tapply(new_pr28$Crime_rate, factor(new_pr28$Percent), function (x) sum((x - mean(x))^2))
+sspe <- sum(pp)
+n_sspe <- length(pr28$Percent)
+c_sspe <- nlevels(factor(x$Percent))
+df_sspe <- n_sspe - c_sspe
+
+# Linear regression line given factor
+y <- m1$coef[1] + m1$coef[2] * pr28$Percent
+
+# Calculation of SSE
+sse <- sum((pr28$Crime_rate-y)^2)
+
+# F* = sslf/c-2 / sspe/n-c
+sslf = sse - sspe
+
+f_stat <- (sslf/(c_sspe-2))/(sspe/(df_sspe))
+f_conf <- qf(0.95,c_sspe-2,df_sspe)
+if (f_stat > f_conf){
+  print("Reject Null Hypo")
+}else{
+  print("Stick to Null Hypo = The regression line is linear")
+}
+
+```
+
+  e. 
+  
+  
+3. 19
+
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
+
+```{r}
+
+
+```
+
+
+```{r}
+
+
+```
