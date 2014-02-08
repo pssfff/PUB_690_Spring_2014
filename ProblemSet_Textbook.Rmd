@@ -133,7 +133,7 @@ Z1[10]
   a. When B1 = 17, 18, 19
   b. B1 = 18, the likelihood function is largest
   c. (B) is consistent with (c) B1=17.93 if we can round the B1 value from (c)
-  d. ???
+  d. I am not sure how to do it. Could you give me feedback on this?
   
 ```{r}   
   B1 <- as.matrix(c(17,18,19))
@@ -170,7 +170,7 @@ b1_estimator <- sum(x_142*u_142)/sum(x_142^2)
 ```
 Chapter 2
 
-2.1 Recheck!
+2.1 
   a. The student can't conclude that there is a linear association between Y and X because the estimated value of slope is falling between the 95 percent confidence limits. Thus, we can't reject the null hypothesis that B1 is zero. 
   
   b. Yes, the native value couldn't give us valuable information, so we might use the centering, which shifts the regression up. It doesn't affect the slope at all.
@@ -225,8 +225,8 @@ upper_b_2
 under_b_2
 
 ```
-  c.(b) is wider (c)
-    - 
+  c.(b) is wider than (c)
+    
   d. 
 - The confidence band is wider than (a)
 - Yes, according to the textbook (p61), the confidence band represents the entire area where all possible regression lines are located. Thus, the confidence band must include the confidence interval from (a)
@@ -401,19 +401,38 @@ stem(m1$residuals)
 
 ```
 
-  c. Residual plot of residuals versus Y. As the crime rate increases, the residuals also increase.
+  c. Residual plot of residuals versus Y. As the crime rate increases, the residuals also increase. 
 ```{r}
-plot(pr28$Crime_rate, m1$residuals)
+# Residual plot of error versus expected Y
+
+y <- m1$coef[1] + m1$coef[2] * pr28$Percent
+plot(y, m1$residuals)
 ```
 
-  d. Normal probability plot of the residuals
+  d. Normal probability plot of the residuals. The correlation coefficient is close to 1. Under alpha = 0.05 level, the coefficient (0.989) is larger than 0.985~0.986(Table B.6). Thus, we can conclude that the distrubtion of the residuals is not significantly different from the normali distribution and the model didn't violate one of assumptions that regression analysis has.
+  
 ```{r}
 # Check distribution of residuals
 qqnorm(m1$residuals)
 qqline(m1$residuals)
 
+# Obtain the coefficient of correlation bet ordered residuals and expected
+# Followed Textbook p115
+n <- 84
+MSE <- sum(m1$residuals^2)/(n-2)
+root_MSE <- sqrt(MSE)
+m1_resi <- sort(m1$residuals, decreasing=FALSE)
+expected_resi <- matrix(0,n,1)
+# Calculate expected residuals
+for (i in 1:length(m1$residuals)) {
+  expected_resi[i,] <- root_MSE * qnorm(((i-0.375)/(n+0.25)), mean=0, sd=1)
+}
 
-# Get
+# Correlation coefficient
+cor(m1_resi, expected_resi)
+plot(m1_resi, expected_resi)
+
+
 ```
     Based on Table 3.6, lack of fit test
     => The regression line is linear (Stick to Null Hypo)
@@ -446,15 +465,92 @@ if (f_stat > f_conf){
 
 ```
 
-  e. 
+  e. Brown-Forsythe Test (non dependent on normality of error term) is usually used for a simple linear regression in which variacne of error terms either increase or decrease with X. Based on below result, variances of the error from the two groups were not different. This indicated that residuals or errors have constant variability across X values. This result was also consistent with the result from (c). The residual plot in (c) showed fluctuations around zero. 
   
+```{r}
+# divide the data set into two groups
+# First 8 rows (<=69) and 78 (>69) in the "new_pr28" dataset
+new_pr28 <- pr28[order(pr28$Percent, xtfrm(pr28$Percent)), ]
+mat_new_pr28 <- as.matrix(new_pr28)
+grp1_pr28 <- mat_new_pr28[1:8,]
+grp2_pr28 <- mat_new_pr28[9:84,]
+
+# Absolute residuals
+resi_grp1 <- grp1_pr28 - mean(grp1_pr28)
+resi_grp2 <- grp2_pr28 - mean(grp2_pr28)
+
+# residuals calculated from median, d1 and d2
+grp1_d = abs(resi_grp1 - median(resi_grp1))
+d1 <- mean(grp1_d)
+grp2_d = abs(resi_grp2 - median(resi_grp2))
+d2 <- mean(grp2_d)
+# Pooled variance
+s_2 <- (sum((grp1_d-d1)^2) + sum((grp2_d-d2)^2))/(82)
+sss <- sqrt(s_2)
+# t-statistics
+t_stat <- (d1-d2)/(sss*sqrt(1/8 + 1/76))
+
+# 95% confidential level
+t_p_stat <- qt(0.975, 82)
+
+if (t_stat <= t_p_stat){
+  
+  print("Variance of the error is constant")
+  
+}else{
+  
+  print("Variance of the error is not constant")
+}
+
+```
   
 3. 19
+  - The different could originate from outliers. The linear regression represents a line that minimizes residuals between predicted Y variable and the explanatory variable (X), so that the residuals might be more oscillating around zero compared to residuals that the original data showed. Even though the linear regression model didn't violate assumption on constant variance of residuals in its prediction, we have to think of variance that the original data set has. Thus, we might need to check whether the original data set has outliers. 
 
+
+3.24
+  a. Case 7 looks like an outlier because the data point is relatively far away from the zero line. 
+  
+```{r}
+# Input data
+x_var <- c(5,8,11,7,13,12,12,6)
+y_var <- c(63,67,74,64,76,69,90,60)
+
+press_data <- data.frame(x_var,y_var)
+# regression
+m4 <- lm(y_var ~ x_var, data=press_data)
+
+plot(x_var, m4$residuals)
+
+```
+
+  b. Coefficient of determination was increased and residual standard error was decreased by removing the 7th data. 
 
 ```{r}
+# Remove the 7th row
+new_press_data <- press_data[-7,]
+m5 <- lm(y_var ~ x_var, data=new_press_data)
+summary(m5)
+summary(m4)
+```
 
+  c. X = 12, 99% confidential interval is from 66.75 to 79.02. The Y value, 90 at X=12 is not falling in the interval. This data point could be considered as an outlier based on the 99% confidential inteval and the point could affect p-value that is used when we check that a linear regression model is fitted into data set or not. Thus, we must care about how to deal with outliers when we analyze our own data set. 
+  
+```{r}
+n <- 7
+MSE <- sum(m5$residuals^2)/(n-2)
+ave_x <- mean(new_press_data$x_var)
+s_2_y_h <- MSE *((1/n) + ((12-ave_x)^2)/sum((new_press_data$x_var - ave_x)^2))
+s <- sqrt(s_2_y_h)
 
+yyy <- m5$coef[1] + m5$coef[2]*12
+
+# 99% confidential interval at X12
+
+upper_b <- yyy + qt(0.995,5)*s
+under_b <- yyy - qt(0.995,5)*s
+upper_b
+under_b
 ```
 
 
@@ -463,13 +559,3 @@ if (f_stat > f_conf){
 
 ```
 
-```{r}
-
-
-```
-
-
-```{r}
-
-
-```
