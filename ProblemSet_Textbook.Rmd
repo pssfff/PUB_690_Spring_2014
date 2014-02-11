@@ -6,16 +6,21 @@ Due date : 2.13.2014
   - I don't agree with it because one of the assumptions was that summation of error at a given X value should be zero. Thus, we can simplify more for the equation by removing the error term.
   
 1.6
-  (a) 
+  (a) Red lines are upper and under bound of 1 standard deviation from the regression line
   
 ```{r}
+library(ggplot2)
 B_0 <- 200
 B_1 <- 5
-
-# Recheck 3D plot
+stan <- 4
+# 
 X <- seq(from=0,to=50,by=10)
 Y <- B_0 + B_1 * X
-plot(X,Y,type="l")
+data_p <- data.frame(X,Y,4)
+names(data_p) <- c("X","Y","STD")
+p4 <- ggplot(data_p,aes(x=X, y=Y),colour="red") + geom_ribbon(aes(ymin=Y-STD,
+               ymax=Y+STD), alpha=.05, colour="red") + theme_bw()
+p4
 ```
   
   (b) Parameter β0 : expected Y value when X value is zero (X=0)
@@ -34,7 +39,7 @@ plot(X,Y,type="l")
 1.10
   - The curvilinear relationshp indicates that changes in Salary at changes in relatively young age is larger than ones at changes in relativley old age. The slopes of the curvilinear relationship are postivie regardless of X values (here, ages). That is, the salary increases as the age increases until ages reaches 47 years.
   
-1.11 Recheck!
+1.11 
   - There is a linear relationship between the two variables, outputs from pre- and post-training. We know that outputs after post-training is less than ones before pre-training. However, we can't know causation. There might be different reasons to lead to the result. 
   
 1.27
@@ -67,7 +72,7 @@ head(residuals)
 
 ```
 
-    (2) at X=60, (3) at 8th case of the X, (4) 5.948^2= 35.383  
+    (2) at X=60, (3) at 8th case of the X, (4) 2052.19
 ```{r}
 c <- coef(m)
 # (2) at age 60yr
@@ -81,6 +86,9 @@ print(Y1)
 Z <- fitted(m)
 Z[8]
 
+# (4)
+Y2 <- c[1] + c[2]*pr27$age
+sum((pr27$mass-Y2)^2)
 ```
 
 1.28
@@ -115,7 +123,7 @@ head(residuals)
 
 ```
 
-    (2) at X=80, (3) at 10th case of the X, (4) 5.701^2 = 32.5014
+    (2) at X=80, (3) at 10th case of the X, (4) 455,273,165
 ```{r}
 c1 <- coef(m1)
 # (2) at age 60yr
@@ -125,9 +133,16 @@ print(Y2)
 # (3) use fitted function
 Z1 <- fitted(m1)
 Z1[10]
+
+# (4)
+Y3 <- c1[1] + c1[2]*pr28$Percent
+sum((pr28$Crime_rate-Y3)^2)
 ```
 
-1.36 ??
+1.36 sum(Yhat*error)
+     => sum of error == zero (1.17)
+     => sum of X*error = zero (1.19)
+     => Thus, sum of Yhat*error also have to be zero
 
 1.42
   a. When B1 = 17, 18, 19
@@ -161,7 +176,7 @@ for (j in 1:3) {
     
 }
 
-# (b) When B1 = 18, the likelihood function is largest
+#(b)When B1 = 18, the likelihood function is largest(second row value came out)
 max(max_likely)
 
 # (c) When B1 = 17.93, the likelihood function is largest
@@ -171,14 +186,14 @@ b1_estimator <- sum(x_142*u_142)/sum(x_142^2)
 Chapter 2
 
 2.1 
-  a. The student can't conclude that there is a linear association between Y and X because the estimated value of slope is falling between the 95 percent confidence limits. Thus, we can't reject the null hypothesis that B1 is zero. 
+  a. The student can conclude that there is a linear association between Y and X because the estimated value of slope is falling between the 95 percent confidence limits. 
   
   b. Yes, the native value couldn't give us valuable information, so we might use the centering, which shifts the regression up. It doesn't affect the slope at all.
   
 2.10
-  a.
-  b.
-  c.
+  a. 28 ~ 33 degree celsius
+  b. $ 10,000 ~ 11,000 
+  c. 3 ~ 5 KWatt
   
 2.13
   a.
@@ -325,7 +340,7 @@ b1_up
 b1_un
 ```
 
-2.50 What is the ki ?
+2.50 What is the ki ? I can't fin out where Ki is
 
 
 2.68 
@@ -437,6 +452,9 @@ plot(m1_resi, expected_resi)
     Based on Table 3.6, lack of fit test
     => The regression line is linear (Stick to Null Hypo)
 ```{r}
+
+# Even though the HTML has errors, you can test the hypothesis in R studio.
+# Please check that.!
 # First soring by Y values at the same X
 new_pr28 <- pr28[order(pr28$Percent, xtfrm(pr28$Percent)), ]
 # Calculate SSPE sum of (Y - mean(Y))^2
