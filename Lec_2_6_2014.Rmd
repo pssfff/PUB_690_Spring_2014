@@ -1,0 +1,37 @@
+Lec_2_6_2014
+========================================================
+
+Quiz_2. 
+- wider range of X => smaller interval of B1
+
+Git and R studio
+
+What is version control system?
+
+- Version indicates dataset or files in a local computer (ex. my labtop)
+- Keep different versions : can go back to previous versions of current dataset
+- Updating versions : more than one version will exist, commit => creat new version
+
+Role of Github
+
+- Different corraborators and labtops, computers
+  : pull versions from the central server
+  : commuicate each other through the central server
+  : PULL first -> update to date for your versions -> PUSH your commits
+  
+```{r}
+# Discussion for homework question, function slr ()
+# Remove missing data
+# na.omit(data)
+# lm( ~ , na.action=)
+# mean(data, na.rm=TRUE)
+
+```
+
+- multiple regression 
+  : mre bins indicates more cateroies that we need to care about (5^p)
+  : Using multipe regression solve out this problem.
+  : Linear regression is helpful to solve out betas
+  : Centering makes y-value at x=0 being meaningful
+  : E(yiIxi)while holding all other X's constant, B1 indicates expected change in Y by a one unit change in X1
+  : E(yIx1=?, x2=?) = ??? B1 and B2 indicates contribution of each X1 and X2 to expected change in Y by a one unit change in X1 and X2 at the same time while holding the rest of X's

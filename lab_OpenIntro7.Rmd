@@ -1,0 +1,101 @@
+From lab_OpenIntro7
+========================================================
+
+
+1) To evaluate our model
+  - Linearity
+  - nearly normal residuals (Symmetry)
+    : E(ei) zero (i=1~n)
+    : at a given X value, E(error_i) = zero
+    : no correlation between (Independent and identible distribution)
+  - constant variability
+    : probability distribution of Y have the same variance regardless of the level of the predictor variable X (p10, Textbook)
+    
+    => Yi come from probability distribution ~ (B_0 + B_1 * X_1, sigma^2) for all X values
+    
+    => Yi and Yj are not correlated (independent) from Textbook p10
+
+2) From the textbook
+  - beta : parameter, b : sample estimator
+  - Try to fit or estimate regression fuction using the sample estimators
+  - Residual is defined as difference between E(Yi) - Y_hat_i
+  - Y_hat is an unbiased estimator of E(Y)
+  - The sum of the residuals = zero
+  
+2. Derive the SLR estimaters
+
+1) when x = 0
+2) difference between expected y value at a given x and one at a unit increse in x value
+
+3 
+
+
+```{r}
+
+download.file("http://www.openintro.org/stat/data/mlb11.RData", destfile = "mlb11.RData")
+load("mlb11.Rdata")
+cor(mlb11$runs, mlb11$at_bats)
+plot_ss(x = mlb11$at_bats, y = mlb11$runs, showSquares = TRUE)
+m1 <- lm(runs ~ at_bats, data = mlb11)
+summary(m1)
+m2 <- lm(runs ~ homeruns, data=mlb11)
+summary(m2)
+
+# Check linearilty of model 
+plot(mlb11$runs ~ mlb11$at_bats)
+
+# plots a line based on its slope and intercept
+abline(m1)
+
+# Verity the linearilty as well as constant variability
+plot(m1$residuals ~ mlb11$at_bats)
+abline(h = 0, lty = 3)
+
+# Check nearly normal residuals
+# - method 1
+plot(m1$residuals ~ mlb11$at_bats)
+hist(m1$residuals)
+
+# - method 2
+qqnorm(m1$residuals)
+qqline(m1$residuals)
+
+# Get linear regression line
+m1 <- lm(runs ~ at_bats, data = mlb11)
+m3 <- lm(runs ~ hits, data = mlb11)
+m4 <- lm(runs ~ homeruns, data = mlb11)
+m5 <- lm(runs ~ bat_avg, data = mlb11)
+m6 <- lm(runs ~ strikeouts, data = mlb11)
+m7 <- lm(runs ~ new_onbase, data=mlb11)
+m8 <- lm(runs ~ new_slug, data=mlb11)
+m9 <- lm(runs ~ new_obs, data=mlb11)
+
+# m9 -> R^2 = .935
+summary(m1)
+summary(m3)
+summary(m4)
+summary(m5)
+summary(m6)
+summary(m7)
+summary(m8)
+summary(m9)
+
+# Check linearity
+plot(mlb11$runs ~ mlb11$new_obs)
+abline(m9)
+
+# Check linearity
+plot(m9$residuals ~ mlb11$new_obs)
+abline(h=0)
+
+# Check near normality of residuals
+qqnorm(m9$residuals)
+qqline(m9$residuals)
+
+```
+
+Q6.
+
+I learned the assumptions during lectures of this class. It might be good to explain how linearity of residuals affect linearity between two variables. 
+
+

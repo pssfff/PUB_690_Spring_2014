@@ -1,0 +1,26 @@
+1.30.2014
+========================================================
+
+qplot(at_bats,run, data=mlb11, geom=c("point", "smooth"),method="lm")
+0.8 as a beta_1 : treatment effect is same across subject with different severity 
+
+```{r}
+# different bin width
+hist(m1$residuals,breaks=20)
+```
+
+```{r}
+
+library(HSAUR)
+library(ggplot2)
+?BtheB
+data("BtheB")
+qplot(bdi.pre, bdi.4m, data=BtheB, geom=c("point", "smooth"),method="lm") + facet_grid(.~ treatment) + theme_bw()
+
+```
+
+
+```{r fig.width=7, fig.height=6}
+
+```
+

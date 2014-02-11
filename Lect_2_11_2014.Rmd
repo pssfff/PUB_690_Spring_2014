@@ -1,0 +1,24 @@
+2.11.2014
+========================================================
+
+a one unit change in B1 while preserving X2 affects change in expected value
+
+LungDataModeling.R
+
+
+
+```{r}
+# To have square matrix (all variables vs all variables with correlation)
+# library(GGally)
+# ggpairs(data)
+# Mulitple regression
+# lm(formula = disease ~ crowding + eduction, data = dat)
+
+```
+
+
+
+```{r fig.width=7, fig.height=6}
+
+```
+

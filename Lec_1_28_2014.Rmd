@@ -1,0 +1,33 @@
+1.28.2014 Tuesday class
+========================================================
+
+covariance = same number of data points for two variables
+           = units? unit of x * unit of y
+cov(xy) = E[xy - x(uy) - (ux)y+ (ux)(uy)] = E(xy) - (ux)(y)
+
+correlation = unitless
+
+beta zero : x0 -> 1 (assumed) 
+y = beta * x0 + beta_1 * x1 = beta + beta_1*x1
+
+predicted y value when x = 0 -> beta zero (B0)
+B0 = zero -> strong constraint 
+
+E(yIx=k) - E(yIx=k-1) = B1 (slope, expected change in y for increase in a 1-unit of x)
+
+Least squares estimation : partial derivative of RSS(u(y)) by (u(y))
+- how can we find the sample mean that minimizes the sumf of squared deviations
+  - derivative of RSS in terms of 
+  - when the derivative=0, the minimum point => sample mean can minimize
+  
+
+```{r}
+
+```
+
+
+
+```{r fig.width=7, fig.height=6}
+
+```
+

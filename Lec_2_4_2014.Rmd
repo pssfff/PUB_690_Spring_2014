@@ -1,0 +1,43 @@
+Lec_2_4_2014
+========================================================
+Warm-up for today's class
+From this article:
+http://www.nature.com/mp/journal/vaop/ncurrent/full/mp2013178a.html
+
+Pros
+- small multiples (similar structure) : easy to interprete
+- 
+
+Cons
+- scale differences
+- bar plot? (much more ink), how about using boxplot as an alternitive?, skewed distru
+- selected p-values (p=0.072 in h)
+
+Final concepts of SLR
+
+- R^2 = 1 - proportional of all variance described by erros
+      = proportion of variance explained by model
+      = squre of correlation (only for simple linear regression) - recheck !
+      = NEVER used for hypothesis test
+      = 1 - SS(res)/SS(tot) = SSreg/SStot
+
+- ANOVA = SStot == SS(reg) + SS(res) (See textbook)
+
+- R command : names(), class(), resid(), fitted(), summary(object)$coef, anova()
+
+- Centering => make intercept be meaningful, no effect on slope!
+
+- rescaling => change in slope but not changes in intepretation (inference won't change)
+
+- 
+
+```{r}
+
+```
+
+
+
+```{r fig.width=7, fig.height=6}
+
+```
+
