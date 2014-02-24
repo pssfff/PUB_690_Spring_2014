@@ -55,13 +55,12 @@ p4 <- ggplot(data_p,aes(x=X, y=Y),colour="red") + geom_ribbon(aes(ymin=Y-STD,
 p4
 ```
   
-  (b) 
-      Parameter $/beta_0$ : expected Y value when X value is zero (X=0)
+  (b) Parameter $\beta_0$ - expected Y value when X value is zero (X=0)
   
-      Parameter $/beta_1$ : the amount of change in Y value when a unit of X value increases
+  Parameter $\beta_1$ : the amount of change in Y value when a unit of X value increases
 
 1.7
-  (a) β0 = 100, β1 = 20 => Y = 100 + 20 * X
+  (a) $\beta_0$ = 100, $\beta_1$ = 20 => Y = 100 + 20 * X
   
       Expected Y value is 200 when the X value is 5,
       variance of the expected Y value is 25
