@@ -1,0 +1,162 @@
+Problem Set_2
+3.7.2014
+Sangsoo Park 
+========================================================
+
+•  Create a short reproducible document (using knitr) that describes the basic structure of a dataset and summarizes some key features of the data using a few key tables and figures. Choose a dataset from these datasets or the ones in the class Google Drive. If your dataset has a lot of variables, focus on a subset of them – less than 6 or so – for the purposes of this exercise. Your write-up should answer the following questions:
+
+o	What is the background/context for this data?
+
+    - To understand factors that result in diabetes of African American in Central Virginia. 
+    - To figure out what variables are related to the prevalence of diabetes of African American in Central Virginia. 
+
+o	How many observations are there?
+
+    - 19 variables from 403 subjects who have diabetes
+    - Data were collected by interview
+
+o	What is the unit of observation?
+
+    - Height in inch, Weight in lb, length of waist and hip in inch, age in year
+    - No ideas of units for the other variables such as hdl (mmol/L or mg/L), glyhd, etc 
+
+o	Is there any missing data? If so, are there patterns to the missingness?
+
+    - For weight variable, there was one missing data 
+    - For hip variable, there was two missing data
+    - For glyhb variable, there was 13 missing data
+    - I don't think that the missing data has pattern.  
+
+```{r}
+# Load library
+library(Hmisc)
+
+# Load Diabete dateset
+getHdata(diabetes)
+
+sub_diabetes <- subset(diabetes, select = c(chol,glyhb,weight,gender,waist,hip))
+which(is.na(sub_diabetes$glyhb))
+```
+
+o	What are the key variables and what do their distributions look like?
+
+    - Waist/ hip ratio : The study found that the ratio might be related to prevalence of diabetes. 
+    - Length of waist and hip : we define obesity using the information
+    - Distributions of waist and hip look like the normal distribution
+  
+```{r}
+hist(sub_diabetes$waist)
+hist(sub_diabetes$hip)
+```
+
+o	Is there a pair of variables that might work well for a Simple Linear Regression? (You don't necessarily need to run one, but you could.)
+
+    - The slope is so small between weight and glyhb.
+    - The slope is still small but relatively larger between hip and glyhb.
+```{r}
+model1 <- lm(glyhb ~ hip, data=sub_diabetes)
+summary(model1)
+plot(sub_diabetes$hip, sub_diabetes$glyhb)
+abline(model1, col="red")
+```
+
+o	Are there any obvious outliers in the data?
+
+    - For the Weight variable, the mean was around 175 lb and the standard deviation was around 38 lb. There was an outlier, over 290 lb, which is larger than the value from summation of the mean and 3 * standard deviation. 
+```{r}
+# Boxplot to check outliers of the "weight" variable
+boxplot(sub_diabetes$weight, xlab="Weight", ylab="lb")
+```
+
+o Add one or two simple regression 
+```{r}
+# between chol and glyhb
+model2 <- lm(glyhb ~ chol, data=sub_diabetes)
+summary(model2)
+plot(sub_diabetes$chol, sub_diabetes$glyhb)
+abline(model2, col="red")
+
+# between weight and glyhb
+model <- lm(glyhb ~ weight, data=sub_diabetes)
+summary(model)
+plot(sub_diabetes$weight, sub_diabetes$glyhb)
+abline(model, col="red")
+```
+
+o Creat "slr" function
+
+```{r}
+# Testing slr function to compare lm function and hand calculation of b0 and b1
+slr <- function(x,y){
+  
+  # Using lm function
+  r_model <- lm(y ~ x)
+  
+  # Before calculation, remove rows including missing values
+  raw_data <- data.frame(x,y)
+  pro_data <-  na.omit(raw_data)
+  
+  x <- pro_data[,1]
+  y <- pro_data[,2]
+  # Using calculation from textbook p18
+  res_x <- x - mean(x)  
+  res_y <- y - mean(y)
+  res_xy <- sum(res_x * res_y)
+  squared_res_x <- res_x^2
+  
+  b1_hand <- sum(res_xy)/sum(squared_res_x)
+  b0_hand <- mean(y) - b1_hand*mean(x)
+  
+  hand_coef <- c(b0_hand,b1_hand)
+  names(hand_coef) <- c("Intercept","x")
+  
+  # Return results to compare between the two methods
+  result <- list(r_model$coef,hand_coef)
+  names(result)[1] <- "lm_function"
+  names(result)[2] <- "hand_cal"
+  return(result)
+}
+```
+
+o Comparison, 
+  
+```{r}
+# See that the function gives us the exact same result
+slr(sub_diabetes$weight, sub_diabetes$glyhb)
+```
+
+o MLR, equation, interpretation of coefficient
+
+```{r}
+# Add mulitiple regression
+multi_prac <- lm(formula =  glyhb~ weight + waist + hip, data = sub_diabetes)
+summary(multi_prac)
+```
+
+  - Equation
+$$y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \beta_3x_{i3} + \epsilon_i; \mbox{ } \epsilon_i \stackrel{iid}{\sim} (0,\sigma^2)$$
+
+  - Based on the result from MLR,
+$$y_i = 2.41 - 0.005*x_{i1} + 0.16*x_{i2} - 0.05*x_{i3}$$
+  
+  - Interpretation
+  
+  A unit increase in waist increased 0.16 of expected glyhb while the other variables are constant. We can interprete the other variables by the same way.
+  $\beta_0$ indicates expected value of y when all x variables are zero.
+      
+o MLR including a categorical variable      
+```{r}
+multi_cate <- lm(formula =  glyhb~ chol + hip + gender, data = sub_diabetes)
+summary(multi_cate)
+```
+
+  - Results
+  
+  When female (gender = 1)
+  $$glyhb_i = 0.93 + 0.01*chol_{i1} - 0.06*hip_{i2} - 0.45$$
+  $$glyhb_i = 0.48 + 0.01*chol_{i1} - 0.06*hip_{i2} $$
+  When male (gender = 0)
+  $$glyhb_i = 0.93 + 0.01*chol_{i1} - 0.06*hip_{i2}$$
+  
+  - Interpretation
+  $\beta_0 indicates expected value of glyhb when all x variables are zero. When gender is female, the intercept of MLR is decreased by 0.45. When gender is male, the MLR is explained by two variables, chol and hip because x value for gender is zero. 
