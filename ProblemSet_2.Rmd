@@ -1,6 +1,6 @@
 Problem Set_2
 3.7.2014
-Sangsoo Park 
+Sangsoo Park
 ========================================================
 
 •  Create a short reproducible document (using knitr) that describes the basic structure of a dataset and summarizes some key features of the data using a few key tables and figures. Choose a dataset from these datasets or the ones in the class Google Drive. If your dataset has a lot of variables, focus on a subset of them – less than 6 or so – for the purposes of this exercise. Your write-up should answer the following questions:
@@ -152,11 +152,24 @@ summary(multi_cate)
 
   - Results
   
-  When female (gender = 1)
-  $$glyhb_i = 0.93 + 0.01*chol_{i1} - 0.06*hip_{i2} - 0.45$$
+    When female (gender = 1)
+  $$glyhb_i = 0.93 + 0.01*chol_{i1} - 0.06*hip_{i2} - 0.45 * 1$$
   $$glyhb_i = 0.48 + 0.01*chol_{i1} - 0.06*hip_{i2} $$
-  When male (gender = 0)
+    When male (gender = 0)
   $$glyhb_i = 0.93 + 0.01*chol_{i1} - 0.06*hip_{i2}$$
   
   - Interpretation
-  $\beta_0 indicates expected value of glyhb when all x variables are zero. When gender is female, the intercept of MLR is decreased by 0.45. When gender is male, the MLR is explained by two variables, chol and hip because x value for gender is zero. 
+    $\beta_0$ indicates expected value of glyhb when all x variables are zero. When gender is female, the intercept of MLR is decreased by 0.45. When gender is male, the MLR is explained by two variables, chol and hip because x value for gender is zero. 
+  
+o Global F-test
+
+  - Interpretation
+   The multiple regression model including the three variables is significantly different with the simple regression model with chol variable. This indicates that adding hip and gender variables makes the multiple regression model being different from the simple regression model (p < 0.01). 
+   
+```{r}
+# Remove rows including Na
+no_na_data <-  na.omit(sub_diabetes)
+small_null <- lm(formula =  glyhb~ chol, data = no_na_data)
+larger <- lm(formula =  glyhb~ chol + hip + gender, data = no_na_data)
+anova(small_null, larger)
+```
