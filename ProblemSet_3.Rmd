@@ -1,0 +1,403 @@
+Problem Set  3
+Due date : 5PM_4. 4.2014
+
+========================================================
+Chapter 2
+
+2.1 
+  a. The student can conclude that there is a linear association between Y and X because the estimated value of slope is falling between the 95 percent confidence limits (alpha level=0.05). 
+  
+  b. Yes, the nagative value couldn't give us valuable information in the situation, so we could use the centering, which shifts the regression line. Thus, we can have non-negative value without change in the slope of the regression line.
+  
+2.10
+  a. Humidity level : 40 ~ 50 %
+  b. $ 500 ~ 700
+  c. 10,000 ~ 15,000 KWatt
+  
+2.13
+  a. The confidence interval was from 3.035 to 3.368 with 95% confidence. We could coclude with confidence coefficient .95 that the mean GPA of students with 28 score for the ACT test is falling between the interval. 
+
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR19.txt", destfile="CH01PR19.txt")
+pr19 = read.table("CH01PR19.txt", col.names=c("GPA", "ACT"))
+m2 <- lm(GPA~ACT, data=pr19)
+summary(m2)
+# Check linearilty of model
+plot(pr19$ACT,pr19$GPA,xlab="ACT",ylab="GPA")
+abline(m2)
+
+# at 28 (ACT)
+cc <- coef(m2)
+YY <- cc[1] + cc[2] * 28
+print(YY)
+
+# To calculate intervals, S^2 = MSE[~]
+n <- 120
+MSE <- sum(m2$residuals^2)/(n-2)
+ave_x <- mean(pr19$ACT)
+ss_2_y_h <- MSE * ( (1/n) + ((28 - ave_x)^2)/sum((pr19$ACT - ave_x)^2) )
+ss <- sqrt(ss_2_y_h)
+
+# t(0.975; 118) = 2.3583, DOF = n-2
+upper_b <- YY + 2.3583*ss
+under_b <- YY - 2.3583*ss
+
+# 95% confidential interval at X = 60, upper and under bound
+upper_b
+under_b
+
+```
+  
+  b. The confidence interval was from 1.722 to 4.68 with 95% confidence. We could predict with confidence coefficient .95 that next GPA of students with 28 score for the ACT test is falling between the interval.  
+```{r}  
+# s^2{pred} = MSE + S^2{Y_hat_h}
+ss_2_pred <- MSE + ss_2_y_h
+ss_pred <- sqrt(ss_2_pred)
+upper_b_2 <- YY + 2.3583 * ss_pred
+under_b_2 <- YY - 2.3583 * ss_pred
+# 95% confidential interval at new prediction, upper and under bound
+upper_b_2
+under_b_2
+```
+  c.The confidence interval of (b) is wider than the one of (a) because calculation of standard deviation for (b) includes one more term, MSE, which increase in the standard deviation. 
+    
+  d. 
+  - The confidence band is wider than (a). (3.026 to 3.376 (d) vs 3.035 to 3.368 (a))
+  - Yes, according to the textbook (p61), The W multiple would be larger than the t multiple as the confidence band represents the entire area where all possible regression lines are located while the confidence limits could be applied only at the single level $X_h$. Thus, the confidence band should be larger than the confidence interval from (a)
+```{r}
+# W^2 = 2F(0.95;2,118) 
+w_2 <- 2*qf(0.95, df1=2,df2=118)
+w <- sqrt(w_2)
+band_up <- YY + w * ss
+band_un <- YY - w * ss
+
+# band 
+band_up
+band_un
+```
+  
+  
+2.28
+
+  a.The confidence interval was from 82.835 to 87.059 with 95% confidence. We could coclude with confidence coefficient .95 that the mean muscle mass of women of age 60   is falling between the interval. 
+  
+```{r}  
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR27.txt", destfile="CH01PR27.txt")
+pr27 = read.table("CH01PR27.txt", col.names=c("mass", "age"))
+m <- lm(mass~age, data=pr27)
+summary(m)
+plot(pr27$age,pr27$mass,xlab="Age",ylab="Muslce Mass")
+abline(m)
+
+c <- coef(m)
+# at age 60yr
+Y = c[1] + c[2]*60
+print(Y)
+
+# To calculate intervals, S^2 = MSE[~]
+n <- 60
+MSE <- sum(m$residuals^2)/(n-2)
+ave_x <- mean(pr27$age)
+s_2_y_h <- MSE * ((1/n) + ((60 - ave_x)^2)/sum((pr27$age - ave_x)^2))
+s <- sqrt(s_2_y_h)
+
+# t(0.975; 58) = 2.00172
+# qt(0.975, 58)
+upper_b <- Y + 2.00172*s
+under_b <- Y - 2.00172*s
+
+# 95% confidential interval at X = 60, upper and under bound
+upper_b
+under_b
+```
+
+  b.The prediction interval was from 68.451 to 101.443 with 95% confidence. Compared to the confidence interval of (a), the prediction interval is relatively wide, so I don't think that the prediction is precise enough.
+  
+```{r}  
+# s^2{pred} = MSE + S^2{Y_hat_h}
+s_2_pred <- MSE + s_2_y_h
+s_pred <- sqrt(s_2_pred)
+upper_b_2 <- Y + 2.00172 * s_pred
+under_b_2 <- Y - 2.00172 * s_pred
+# 95% confidential interval at new prediction, upper and under bound
+upper_b_2
+under_b_2
+
+```
+  c. 
+  - The confidence band is wider than (a)(82.331 to 87.563(c) vs 82.835 to 87.059(a))
+  - Yes, according to the textbook (p61), The W multiple would be larger than the t multiple as the confidence band represents the entire area where all possible regression lines are located while the confidence limits could be applied only at the single level $X_h$. Thus, the confidence band should be larger than the confidence interval from (a)
+```{r}
+
+w_2 <- 2*qf(0.95, df1=2,df2=58)
+w <- sqrt(w_2)
+band_up <- Y + w * s
+band_un <- Y - w * s
+
+# band 
+band_up
+band_un
+```
+
+2.30
+
+  a.
+  $H_0$ : $\beta_1$ = 0
+  $H_1$ : $\beta_1$ is not 0
+  In below summary, t-value is -4.103 and p value (0.0000957) is smaller than 0.01. Thus, we could conclude that there is a significant relationship between the two variables.
+  
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
+pr28 = read.table("CH01PR28.txt", col.names=c("Crime_rate","Percent"))
+m1 <- lm(Crime_rate~Percent, data=pr28)
+summary(m1)
+```
+  
+  b. The confidence interval of $\beta_1$ was from -280.212 to -60.939. The slope from the regression model (-170.58) is between the 99% confidence interval. This indicates that with confidence coefficient 0.95, we estimate that the mean crime rate increases by between -280.212 and -60.939 for a unit increase in the percentage of individuals in the county having at least a high-school diploma. 
+  
+```{r}
+n <- 84
+MSE <- sum(m1$residuals^2)/(n-2)
+x_ave <- mean(pr28$Percent)
+s_2_b1 <- MSE/sum((pr28$Percent - x_ave)^2)
+s_b1 <- sqrt(s_2_b1)
+# t(0.995;82)
+tt <- qt(0.995,df=82)
+b1_up <- m1$coef[2] + tt*s_b1
+b1_un <- m1$coef[2] - tt*s_b1
+
+b1_up
+b1_un
+```
+
+2.50 What is the ki ? I can't fin out where Ki is (2.6)
+
+
+2.68 
+
+  a. Linear regression line below
+```{r}
+
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR20.txt", destfile="CH01PR20.txt")
+pr20 = read.table("CH01PR20.txt", col.names=c("Min","Copier"))
+m3 <- lm(Min~Copier, data=pr20)
+summary(m3)
+plot(pr20$Copier,pr20$Min,xlab="Copier",ylab="Min", xlim=c(1,8))
+axis(side=1, at=c(1:8))
+abline(m3)
+```
+
+  b. Please look at the red lines in the first plot. The slope is positive obviously, and the size of band at each x value looks very small. Thus, we could conclude that the true regression relation has been precisely estmiated.
+  
+```{r}
+# Hand calculation to add confidential band for the true regression
+# W2, std of $Y_h$, $Y_h$
+n <- 45
+MSE <- sum(m3$residuals^2)/(n-2)
+ave_x <- mean(pr20$Copier)
+xh <- as.matrix(c(1:8))
+ss_2 <- matrix(0,8,1)
+
+for (i in 1:8) {
+  
+  ss_2[i,1] <- MSE*((1/n)+((xh[i,1] - ave_x)^2)/sum((pr20$Copier-ave_x)^2))
+  
+}
+
+ss <- sqrt(ss_2)
+
+# W^2 = 2F(0.95;2,58)
+w_2 <- 2 * qf(0.90,2,43)
+w <- sqrt(w_2)
+y <- m3$coef[1] + m3$coef[2] * xh
+band_up <- y + w * ss
+band_un <- y - w * ss
+
+plot(pr20$Copier,pr20$Min,xlab="Copier",ylab="Min", xlim=c(1,8))
+axis(side=1, at=c(1:8))
+abline(m3)
+lines(band_up, col="red")
+lines(band_un, col="red")
+
+library(ggplot2)
+# Using qplot for the true regression line with confidence interval
+qplot(Copier, Min, data=pr20, xlim=c(1,8),geom=c("point", "smooth"),method="lm")+ theme_bw()
+```
+
+Chapter 3.
+
+3.8 
+  a. Stem plot for X : distribtuion of the variable
+  
+```{r}
+download.file("https://netfiles.umn.edu/users/nacht001/www/nachtsheim/Kutner/Chapter%20%201%20Data%20Sets/CH01PR28.txt", destfile="CH01PR28.txt")
+pr28 = read.table("CH01PR28.txt", col.names=c("Crime_rate","Percent"))
+m1 <- lm(Crime_rate~Percent, data=pr28)
+# stem and leaf plot for X
+stem(pr28$Percent)
+
+```
+
+  b. Yes, the distribution looks like symmetrical.
+```{r}
+# Stem and leaf plot for residuals across X
+stem(m1$residuals)
+
+```
+
+  c. Residual plot of residuals versus Y. As the crime rate increases, the residuals also increase. 
+```{r}
+# Residual plot of error versus expected Y
+
+y <- m1$coef[1] + m1$coef[2] * pr28$Percent
+plot(y, m1$residuals)
+```
+
+  d. Normal probability plot of the residuals. The correlation coefficient is close to 1. Under alpha = 0.05 level, the coefficient (0.989) is larger than 0.985~0.986(Table B.6). Thus, we can conclude that the distrubtion of the residuals is not significantly different from the normali distribution and the model didn't violate one of assumptions that regression analysis has.
+  
+```{r}
+# Check distribution of residuals
+qqnorm(m1$residuals)
+qqline(m1$residuals)
+
+# Obtain the coefficient of correlation bet ordered residuals and expected
+# Followed Textbook p115
+n <- 84
+MSE <- sum(m1$residuals^2)/(n-2)
+root_MSE <- sqrt(MSE)
+m1_resi <- sort(m1$residuals, decreasing=FALSE)
+expected_resi <- matrix(0,n,1)
+# Calculate expected residuals
+for (i in 1:length(m1$residuals)) {
+  expected_resi[i,] <- root_MSE * qnorm(((i-0.375)/(n+0.25)), mean=0, sd=1)
+}
+
+# Correlation coefficient
+cor(m1_resi, expected_resi)
+plot(m1_resi, expected_resi)
+
+
+```
+    Based on Table 3.6, lack of fit test
+    => The regression line is linear (Stick to Null Hypo)
+```{r}
+
+# Even though the HTML has errors, you can test the hypothesis in R studio.
+# Please check that.!
+# First soring by Y values at the same X
+new_pr28 <- pr28[order(pr28$Percent, xtfrm(pr28$Percent)), ]
+# Calculate SSPE sum of (Y - mean(Y))^2
+pp <- tapply(new_pr28$Crime_rate, factor(new_pr28$Percent), function (x) sum((x - mean(x))^2))
+sspe <- sum(pp)
+n_sspe <- length(pr28$Percent)
+c_sspe <- nlevels(factor(x$Percent))
+df_sspe <- n_sspe - c_sspe
+
+# Linear regression line given factor
+y <- m1$coef[1] + m1$coef[2] * pr28$Percent
+
+# Calculation of SSE
+sse <- sum((pr28$Crime_rate-y)^2)
+
+# F* = sslf/c-2 / sspe/n-c
+sslf = sse - sspe
+
+f_stat <- (sslf/(c_sspe-2))/(sspe/(df_sspe))
+f_conf <- qf(0.95,c_sspe-2,df_sspe)
+if (f_stat > f_conf){
+  print("Reject Null Hypo")
+}else{
+  print("Stick to Null Hypo = The regression line is linear")
+}
+
+```
+
+  e. Brown-Forsythe Test (non dependent on normality of error term) is usually used for a simple linear regression in which variacne of error terms either increase or decrease with X. Based on below result, variances of the error from the two groups were not different. This indicated that residuals or errors have constant variability across X values. This result was also consistent with the result from (c). The residual plot in (c) showed fluctuations around zero. 
+  
+```{r}
+# divide the data set into two groups
+# First 8 rows (<=69) and 78 (>69) in the "new_pr28" dataset
+new_pr28 <- pr28[order(pr28$Percent, xtfrm(pr28$Percent)), ]
+mat_new_pr28 <- as.matrix(new_pr28)
+grp1_pr28 <- mat_new_pr28[1:8,]
+grp2_pr28 <- mat_new_pr28[9:84,]
+
+# Absolute residuals
+resi_grp1 <- grp1_pr28 - mean(grp1_pr28)
+resi_grp2 <- grp2_pr28 - mean(grp2_pr28)
+
+# residuals calculated from median, d1 and d2
+grp1_d = abs(resi_grp1 - median(resi_grp1))
+d1 <- mean(grp1_d)
+grp2_d = abs(resi_grp2 - median(resi_grp2))
+d2 <- mean(grp2_d)
+# Pooled variance
+s_2 <- (sum((grp1_d-d1)^2) + sum((grp2_d-d2)^2))/(82)
+sss <- sqrt(s_2)
+# t-statistics
+t_stat <- (d1-d2)/(sss*sqrt(1/8 + 1/76))
+
+# 95% confidential level
+t_p_stat <- qt(0.975, 82)
+
+if (t_stat <= t_p_stat){
+  
+  print("Variance of the error is constant")
+  
+}else{
+  
+  print("Variance of the error is not constant")
+}
+
+```
+  
+3. 19
+  - The different could originate from outliers. The linear regression represents a line that minimizes residuals between predicted Y variable and the explanatory variable (X), so that the residuals might be more oscillating around zero compared to residuals that the original data showed. Even though the linear regression model didn't violate assumption on constant variance of residuals in its prediction, we have to think of variance that the original data set has. Thus, we might need to check whether the original data set has outliers. 
+
+
+3.24
+  a. Case 7 looks like an outlier because the data point is relatively far away from the zero line. 
+  
+```{r}
+# Input data
+x_var <- c(5,8,11,7,13,12,12,6)
+y_var <- c(63,67,74,64,76,69,90,60)
+
+press_data <- data.frame(x_var,y_var)
+# regression
+m4 <- lm(y_var ~ x_var, data=press_data)
+
+plot(x_var, m4$residuals)
+
+```
+
+  b. Coefficient of determination was increased and residual standard error was decreased by removing the 7th data. 
+
+```{r}
+# Remove the 7th row
+new_press_data <- press_data[-7,]
+m5 <- lm(y_var ~ x_var, data=new_press_data)
+summary(m5)
+summary(m4)
+```
+
+  c. X = 12, 99% confidential interval is from 66.75 to 79.02. The Y value, 90 at X=12 is not falling in the interval. This data point could be considered as an outlier based on the 99% confidential inteval and the point could affect p-value that is used when we check that a linear regression model is fitted into data set or not. Thus, we must care about how to deal with outliers when we analyze our own data set. 
+  
+```{r}
+n <- 7
+MSE <- sum(m5$residuals^2)/(n-2)
+ave_x <- mean(new_press_data$x_var)
+s_2_y_h <- MSE *((1/n) + ((12-ave_x)^2)/sum((new_press_data$x_var - ave_x)^2))
+s <- sqrt(s_2_y_h)
+
+yyy <- m5$coef[1] + m5$coef[2]*12
+
+# 99% confidential interval at X12
+
+upper_b <- yyy + qt(0.995,5)*s
+under_b <- yyy - qt(0.995,5)*s
+upper_b
+under_b
+```
+
+
